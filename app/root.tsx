@@ -7,7 +7,9 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-
+import SideNavbar from "./components/sidenavbar/sidenavbar";
+import {MantineProvider } from '@mantine/core';
+import themeTTC from "./utils/themeTTC";
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
   title: "New Remix App",
@@ -22,7 +24,14 @@ export default function App() {
         <Links />
       </head>
       <body>
+      <MantineProvider
+      theme={themeTTC}
+    >
+        <SideNavbar/>
+        <div style={{marginLeft:"81px"}}>
         <Outlet />
+        </div>
+        </MantineProvider>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
