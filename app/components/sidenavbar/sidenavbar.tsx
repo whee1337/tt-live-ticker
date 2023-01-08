@@ -1,6 +1,6 @@
 
     import { useState } from 'react';
-    import { Navbar, Center, Tooltip, UnstyledButton, createStyles, Stack, Image } from '@mantine/core';
+    import { Navbar, Center, Tooltip, createStyles, Stack, Image } from '@mantine/core';
     import {
       TablerIcon,
       IconHistory,
@@ -64,7 +64,7 @@ import { Link } from '@remix-run/react';
     }
     
     const mockdata = [
-      { icon: IconSatellite, label: 'Live-Spiele', destination:"livegames" },
+      { icon: IconSatellite, label: 'Live-Spiele', destination:"/livegames" },
       { icon: IconHistory, label: 'Gestreamte Spiele',destination:"" },
       { icon: IconCalendar, label: 'Spielplan',destination:"" }
     ];
@@ -84,7 +84,7 @@ import { Link } from '@remix-run/react';
     
       return (
         <Navbar
-          height={750}
+          height={"100%"}
           width={{ base: 80 }}
           p="md"
           sx={(theme) => ({

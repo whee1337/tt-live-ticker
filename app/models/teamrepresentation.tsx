@@ -1,21 +1,22 @@
 
 export enum TeamType {
-    Damen,
-    Herren,
-    Jugend
+    Damen ="Damen",
+    Herren = "Herren",
+    Jugend = "Jugend"
 }
+
 export interface Aufstellung 
 {
     player1: string,
     player2: string,
-    player3:string,
-    player4:string, 
-    player5?:string,
-    player6?:string
+    player3: string,
+    player4: string, 
+    player5?: string,
+    player6?: string
 }
 
 export interface TeamRepresentation {
-    type: TeamType,
-    teamNumber: number,
-    aufstellung: Aufstellung
+    teamName: string,
+    aufstellung: Aufstellung,
+    teamNumber?: number
 }
