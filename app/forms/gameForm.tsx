@@ -1,12 +1,17 @@
-import { Box, TextInput, Checkbox, Group, Button, Select, NumberInput, Grid, Stack, SelectItem } from "@mantine/core";
+import { Box, TextInput, Group, Button, Select, NumberInput, Grid, SelectItem, Alert } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { Form } from "@remix-run/react";
 import Game from "~/models/game";
-import { TeamRepresentation, TeamType } from "~/models/teamrepresentation";
+import { TeamType } from "~/models/teamrepresentation";
+import {
+    IconAlertCircle
+  } from '@tabler/icons';
+import { Form, useActionData, useNavigate, useTransition } from "@remix-run/react";
+import { useEffect } from "react";
 
 interface GameFormProps {
     setGame: (game: Game) => void,
-    game: Game | undefined
+    game: Game | undefined,
+    setOpen: (value: boolean) => void
 }
 
 const data: SelectItem[] = [
@@ -15,9 +20,20 @@ const data: SelectItem[] = [
     { value: TeamType.Jugend.toString(), label: 'Jugend' },
 ];
 
-export default function GameForm({ setGame, game }: GameFormProps) {
+export default function GameForm({ setGame, game,setOpen }: GameFormProps) {
+    const actionData = useActionData();
+    const transition = useTransition();
+
+    useEffect(()=>
+    {
+        if(transition.state ==="loading" &&  actionData?.isValid)
+            setOpen(false);
+
+    }, [actionData, transition])
+
+
     const form = useForm({
-        initialValues: game ? {
+        initialValues:( game ? {
             nameO: game.opponentTeam.teamName,
             teamType: game.type.toString(),
             id: game.id,
@@ -37,7 +53,7 @@ export default function GameForm({ setGame, game }: GameFormProps) {
         } :
             {
                 nameO: '',
-                teamType: '',
+                teamType: TeamType.Herren.toString(),
                 numberH: 1,
                 player1H: '',
                 player2H: '',
@@ -51,8 +67,9 @@ export default function GameForm({ setGame, game }: GameFormProps) {
                 player4O: '',
                 player5O: '',
                 player6O: '',
-            }
-    });
+            }),
+    }
+    );
 
     const renderAuftellung = (heim: boolean) => {
         const rows = [];
@@ -63,6 +80,7 @@ export default function GameForm({ setGame, game }: GameFormProps) {
                     withAsterisk
                     placeholder={i.toString()}
                     key={i + postix}
+                    error={true}
                     name={"player" + i.toString() + postix}
                     {...form.getInputProps("player" + i.toString() + postix)}
                 />
@@ -72,9 +90,9 @@ export default function GameForm({ setGame, game }: GameFormProps) {
     }
     return (
         <Box mx="auto">
-            <form method="post" action="/livegames">
-                <TextInput         
-                    style={{display: "none"}}       
+            <Form method="post">
+                <TextInput
+                    style={{ display: "none" }}
                     name="id"
                     {...form.getInputProps('id')}
                 />
@@ -124,10 +142,14 @@ export default function GameForm({ setGame, game }: GameFormProps) {
 
                     </Grid.Col>
                 </Grid>
+                { actionData&& !actionData.isValid && <Alert mt={8} icon={<IconAlertCircle size={16} />} title="Fehlerhafte Eingabe" color="orange">
+                {actionData.messages.map((value:string) => <p key={Math.random()}>{value}</p>)}
+            </Alert>}
                 <Group position="right" mt="md">
-                    <Button type="submit">Submit</Button>
+                    <Button disabled={!form.isValid()} type="submit">Submit</Button>
                 </Group>
-            </form>
+            </Form>
+
         </Box>
     )
 }
