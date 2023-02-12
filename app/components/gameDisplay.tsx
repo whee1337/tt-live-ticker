@@ -13,10 +13,11 @@ import { TeamType } from "~/models/teamrepresentation";
 
 interface GameDisplayProps {
     game: Game,
-    openModalEdit: (value: Game)=>void
+    openModalEdit: (value: Game)=>void,
+    openStartGame: (value: Game) => void
 }
 
-export default function GameDisplay({ openModalEdit,game }: GameDisplayProps) {
+export default function GameDisplay({ openModalEdit,game, openStartGame }: GameDisplayProps) {
     const navigate = useNavigate();
 
     const isCreator: boolean = true;
@@ -25,7 +26,7 @@ export default function GameDisplay({ openModalEdit,game }: GameDisplayProps) {
         navigate("/livegames/" + game.id)
     }
     const startGame = () => {
-        console.log("Game Started!")
+        openStartGame(game);
     }
 
     return (

@@ -7,11 +7,14 @@ import { getStoredGames, storeGames } from '~/data/games'
 import { useActionData, useLoaderData } from "@remix-run/react";
 import GameDisplay from "~/components/gameDisplay";
 import validateGame from "~/models/gameValidator";
+import StartForm from "~/forms/startForm";
 
 export default function LiveGames() {
 
   const actionData = useActionData();
   const games = useLoaderData<typeof loader>();
+
+  const [openStartGame, setOpenStartGame] = useState<boolean>(false);
 
   const [open, setOpen] = useState<boolean>(false);
   const [game, setGame] = useState<Game | undefined>(undefined);
@@ -26,13 +29,18 @@ export default function LiveGames() {
     setOpen(true);
   }
 
+  const openToStart = (game: Game) => {
+    setGame(game);
+    setOpenStartGame(true);
+  }
+
   return <>
     <Stack>
       <Button onClick={() => openToCreate()}>Neues Live-Spiel erstellen</Button>
       <h2>Live Spiele</h2>
     </Stack>
     <Grid grow>
-      {games.map((game: Game) => { return <Grid.Col key={game.id.toString()} span={3} style={{ maxWidth: 400 }}> <GameDisplay openModalEdit={openToEdit} game={game} /></Grid.Col> })}
+      {games.map((game: Game) => { return <Grid.Col key={game.id.toString()} span={3} style={{ maxWidth: 400 }}> <GameDisplay openStartGame={openToStart} openModalEdit={openToEdit} game={game} /></Grid.Col> })}
     </Grid>
     <Modal
       opened={open}
@@ -42,11 +50,19 @@ export default function LiveGames() {
     >
       <GameForm game={game} setOpen={setOpen} setGame={setGame}></GameForm>
     </Modal>
+
+    <Modal
+      opened={openStartGame}
+      onClose={() => setOpenStartGame(false)}
+      fullScreen
+      title="Spiel starten"
+    >
+      <StartForm game={game}></StartForm>
+    </Modal>
   </>
 }
 
-
-export async function action({ request }) {
+export async function action({ request } : any) {
 
   const getRandom = (min: number, max: number) => {
     const floatRandom = Math.random()
